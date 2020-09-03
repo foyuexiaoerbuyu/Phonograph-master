@@ -10,12 +10,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
-import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.kabouzeid.gramophone.R;
@@ -38,6 +33,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
@@ -269,14 +268,14 @@ public class MusicUtil {
                         } else {
                             // I'm not sure if we'd ever get here (deletion would
                             // have to fail, but no exception thrown)
-                            Log.e("MusicUtils", "Failed to delete file " + name);
+                            LogUtils.e("MusicUtils", "Failed to delete file " + name);
                         }
 
                         cursor.moveToNext();
                     } catch (@NonNull final SecurityException ex) {
                         cursor.moveToNext();
                     } catch (NullPointerException e) {
-                        Log.e("MusicUtils", "Failed to find file " + name);
+                        LogUtils.e("MusicUtils", "Failed to find file " + name);
                     }
                 }
                 cursor.close();

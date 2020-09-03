@@ -18,18 +18,19 @@ package com.kabouzeid.gramophone.misc;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.kabouzeid.gramophone.util.LogUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.PagerAdapter;
-
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementation of {@link PagerAdapter} that
@@ -110,7 +111,7 @@ public abstract class CustomFragmentStatePagerAdapter extends PagerAdapter {
         }
 
         Fragment fragment = getItem(position);
-        if (DEBUG) Log.v(TAG, "Adding item #" + position + ": f=" + fragment);
+        if (DEBUG) LogUtils.v(TAG, "Adding item #" + position + ": f=" + fragment);
         if (mSavedState.size() > position) {
             Fragment.SavedState fss = mSavedState.get(position);
             if (fss != null) {
@@ -135,7 +136,7 @@ public abstract class CustomFragmentStatePagerAdapter extends PagerAdapter {
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();
         }
-        if (DEBUG) Log.v(TAG, "Removing item #" + position + ": f=" + object
+        if (DEBUG) LogUtils.v(TAG, "Removing item #" + position + ": f=" + object
                 + " v=" + ((Fragment) object).getView());
         while (mSavedState.size() <= position) {
             mSavedState.add(null);
@@ -223,7 +224,7 @@ public abstract class CustomFragmentStatePagerAdapter extends PagerAdapter {
                         f.setMenuVisibility(false);
                         mFragments.set(index, f);
                     } else {
-                        Log.w(TAG, "Bad fragment at key " + key);
+                        LogUtils.w(TAG, "Bad fragment at key " + key);
                     }
                 }
             }

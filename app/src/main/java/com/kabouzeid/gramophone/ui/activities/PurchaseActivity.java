@@ -3,10 +3,6 @@ package com.kabouzeid.gramophone.ui.activities;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
@@ -17,9 +13,13 @@ import com.kabouzeid.appthemehelper.color.MaterialColor;
 import com.kabouzeid.gramophone.App;
 import com.kabouzeid.gramophone.R;
 import com.kabouzeid.gramophone.ui.activities.base.AbsBaseActivity;
+import com.kabouzeid.gramophone.util.LogUtils;
 
 import java.lang.ref.WeakReference;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -94,7 +94,7 @@ public class PurchaseActivity extends AbsBaseActivity implements BillingProcesso
 
     @Override
     public void onBillingError(int errorCode, @Nullable Throwable error) {
-        Log.e(TAG, "Billing error: code = " + errorCode, error);
+        LogUtils.e(TAG, "Billing error: code = " + errorCode, error);
     }
 
     @Override

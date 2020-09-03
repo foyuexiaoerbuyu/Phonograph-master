@@ -15,15 +15,13 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.kabouzeid.gramophone.R;
 import com.kabouzeid.gramophone.loader.SongLoader;
 import com.kabouzeid.gramophone.model.Song;
 import com.kabouzeid.gramophone.service.MusicService;
+import com.kabouzeid.gramophone.util.LogUtils;
 import com.kabouzeid.gramophone.util.PreferenceUtil;
 
 import java.io.File;
@@ -31,6 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.WeakHashMap;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
@@ -460,7 +461,7 @@ public class MusicPlayerRemote {
                 return cursor.getString(column_index);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            LogUtils.e(TAG, e.getMessage());
         } finally {
             if (cursor != null)
                 cursor.close();

@@ -7,14 +7,15 @@ import android.media.MediaPlayer;
 import android.media.audiofx.AudioEffect;
 import android.net.Uri;
 import android.os.PowerManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.kabouzeid.gramophone.R;
 import com.kabouzeid.gramophone.service.playback.Playback;
+import com.kabouzeid.gramophone.util.LogUtils;
 import com.kabouzeid.gramophone.util.PreferenceUtil;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * @author Andrew Neal, Karim Abou Zeid (kabouzeid)
@@ -103,9 +104,9 @@ public class MultiPlayer implements Playback, MediaPlayer.OnErrorListener, Media
         try {
             mCurrentMediaPlayer.setNextMediaPlayer(null);
         } catch (IllegalArgumentException e) {
-            Log.i(TAG, "Next media player is current one, continuing");
+            LogUtils.i(TAG, "Next media player is current one, continuing");
         } catch (IllegalStateException e) {
-            Log.e(TAG, "Media player not initialized!");
+            LogUtils.e(TAG, "Media player not initialized!");
             return;
         }
         if (mNextMediaPlayer != null) {
@@ -123,7 +124,7 @@ public class MultiPlayer implements Playback, MediaPlayer.OnErrorListener, Media
                 try {
                     mCurrentMediaPlayer.setNextMediaPlayer(mNextMediaPlayer);
                 } catch (@NonNull IllegalArgumentException | IllegalStateException e) {
-                    Log.e(TAG, "setNextDataSource: setNextMediaPlayer()", e);
+                    LogUtils.e(TAG, "setNextDataSource: setNextMediaPlayer()", e);
                     if (mNextMediaPlayer != null) {
                         mNextMediaPlayer.release();
                         mNextMediaPlayer = null;

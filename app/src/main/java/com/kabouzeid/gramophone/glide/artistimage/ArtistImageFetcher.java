@@ -3,7 +3,12 @@ package com.kabouzeid.gramophone.glide.artistimage;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.media.MediaMetadataRetriever;
-import android.util.Log;
+
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.data.DataFetcher;
+import com.kabouzeid.gramophone.glide.audiocover.AudioFileCoverUtils;
+import com.kabouzeid.gramophone.util.ImageUtil;
+import com.kabouzeid.gramophone.util.LogUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,12 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.data.DataFetcher;
-import com.kabouzeid.gramophone.glide.audiocover.AudioFileCoverUtils;
-import com.kabouzeid.gramophone.util.ImageUtil;
-import com.kabouzeid.gramophone.util.PreferenceUtil;
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
@@ -39,7 +38,7 @@ public class ArtistImageFetcher implements DataFetcher<InputStream> {
 
     @Override
     public String getId() {
-        Log.d("MOSAIC", "get id for" + model.artistName);
+        LogUtils.d("MOSAIC", "get id for" + model.artistName);
         // never return NULL here!
         // this id is used to determine whether the image is already cached
         // we use the artist name as well as the album years + file paths
@@ -48,7 +47,7 @@ public class ArtistImageFetcher implements DataFetcher<InputStream> {
 
     @Override
     public InputStream loadData(Priority priority) throws Exception {
-        Log.d("MOSAIC", "load data for" + model.artistName);
+        LogUtils.d("MOSAIC", "load data for" + model.artistName);
         return stream = getMosaic(model.albumCovers);
     }
 

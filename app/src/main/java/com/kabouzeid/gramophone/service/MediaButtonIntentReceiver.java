@@ -17,17 +17,16 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
 import android.view.KeyEvent;
 
-import androidx.core.content.ContextCompat;
-
 import com.kabouzeid.gramophone.BuildConfig;
+import com.kabouzeid.gramophone.util.LogUtils;
+
+import androidx.core.content.ContextCompat;
 
 /**
  * Used to control headset playback.
@@ -57,7 +56,7 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
                     final int clickCount = msg.arg1;
                     final String command;
 
-                    if (DEBUG) Log.v(TAG, "Handling headset click, count = " + clickCount);
+                    if (DEBUG) LogUtils.v(TAG, "Handling headset click, count = " + clickCount);
                     switch (clickCount) {
                         case 1:
                             command = MusicService.ACTION_TOGGLE_PAUSE;
@@ -82,14 +81,6 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
             releaseWakeLockIfHandlerIdle();
         }
     };
-
-    @Override
-    public void onReceive(final Context context, final Intent intent) {
-        if (DEBUG) Log.v(TAG, "Received intent: " + intent);
-        if (handleIntent(context, intent) && isOrderedBroadcast()) {
-            abortBroadcast();
-        }
-    }
 
     public static boolean handleIntent(final Context context, final Intent intent) {
         final String intentAction = intent.getAction();
@@ -143,7 +134,8 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
                             }
 
                             mClickCounter++;
-                            if (DEBUG) Log.v(TAG, "Got headset click, count = " + mClickCounter);
+                            if (DEBUG)
+                                LogUtils.v(TAG, "Got headset click, count = " + mClickCounter);
                             mHandler.removeMessages(MSG_HEADSET_DOUBLE_CLICK_TIMEOUT);
 
                             Message msg = mHandler.obtainMessage(
@@ -166,6 +158,20 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
         return false;
     }
 
+    private static void acquireWakeLockAndSendMessage(Context context, Message msg, long delay) {
+        if (mWakeLock == null) {
+            Context appContext = context.getApplicationContext();
+            PowerManager pm = (PowerManager) appContext.getSystemService(Context.POWER_SERVICE);
+            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Phonograph headset button");
+            mWakeLock.setReferenceCounted(false);
+        }
+        if (DEBUG) LogUtils.v(TAG, "Acquiring wake lock and sending " + msg.what);
+        // Make sure we don't indefinitely hold the wake lock under any circumstances
+        mWakeLock.acquire(10000);
+
+        mHandler.sendMessageDelayed(msg, delay);
+    }
+
     private static void startService(Context context, String command) {
         final Intent intent = new Intent(context, MusicService.class);
         intent.setAction(command);
@@ -182,30 +188,25 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
         }
     }
 
-    private static void acquireWakeLockAndSendMessage(Context context, Message msg, long delay) {
-        if (mWakeLock == null) {
-            Context appContext = context.getApplicationContext();
-            PowerManager pm = (PowerManager) appContext.getSystemService(Context.POWER_SERVICE);
-            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Phonograph headset button");
-            mWakeLock.setReferenceCounted(false);
-        }
-        if (DEBUG) Log.v(TAG, "Acquiring wake lock and sending " + msg.what);
-        // Make sure we don't indefinitely hold the wake lock under any circumstances
-        mWakeLock.acquire(10000);
-
-        mHandler.sendMessageDelayed(msg, delay);
-    }
-
     private static void releaseWakeLockIfHandlerIdle() {
         if (mHandler.hasMessages(MSG_HEADSET_DOUBLE_CLICK_TIMEOUT)) {
-            if (DEBUG) Log.v(TAG, "Handler still has messages pending, not releasing wake lock");
+            if (DEBUG)
+                LogUtils.v(TAG, "Handler still has messages pending, not releasing wake lock");
             return;
         }
 
         if (mWakeLock != null) {
-            if (DEBUG) Log.v(TAG, "Releasing wake lock");
+            if (DEBUG) LogUtils.v(TAG, "Releasing wake lock");
             mWakeLock.release();
             mWakeLock = null;
+        }
+    }
+
+    @Override
+    public void onReceive(final Context context, final Intent intent) {
+        if (DEBUG) LogUtils.v(TAG, "Received intent: " + intent);
+        if (handleIntent(context, intent) && isOrderedBroadcast()) {
+            abortBroadcast();
         }
     }
 }
